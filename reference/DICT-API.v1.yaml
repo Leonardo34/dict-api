@@ -40,6 +40,8 @@ paths:
                 $ref: '#/components/schemas/Entry'
       operationId: get-v1-dict-entries
       description: Endpoint para buscar dados de uma conta transacional através de seu identificador
+      tags:
+        - Directory
       parameters:
         - schema:
             type: string
