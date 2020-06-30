@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: DICT API
+  version: '1.0'
+  description: |
+    A API do DICT é o serviço que do arranjo PIX que permite buscar os detalhes de uma conta transacional através de seu identificar no diretório de chaves transacionais. Este identificador, chave, pode ser do tipo mais conveniente ao usuário, tendo disponíveis os seguintes tipos EMAIL, TELEFONE, CPF, CNPJ e EVP.
+servers:
+  - url: 'https://apigatewayuat.bvnet.bv'
+paths:
+  '/v1/dict/entries/{key}':
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+      operationId: get-v1-dict-entries
+      description: Endpoint para buscar dados de uma conta transacional através de seu identificador
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: document
+          description: CNPJ do parceiro
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: endToEnd
+          required: true
+          description: Identificador fim-a-fim do pagamento associado a essa requisição. Corresponde ao campo EndToEndId na mensagem pacs.008. Usado para rate-limiting.
+    parameters:
+      - schema:
+          type: string
+        name: key
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-v1-dict-entries-key
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Entry:
+      title: Entry
+      type: object
+      properties:
+        key:
+          type: string
+        keyType:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Owner'
+        account:
+          $ref: '#/components/schemas/Account'
+        creationDate:
+          type: string
+        keyOwnershipDate:
+          type: string
+      required:
+        - key
+        - keyType
+        - owner
+        - account
+    Owner:
+      title: Owner
+      type: object
+      properties:
+        type:
+          type: string
+        taxIdNumber:
+          type: string
+        name:
+          type: string
+        tradeName:
+          type: string
+      required:
+        - type
+        - taxIdNumber
+        - name
+    Account:
+      title: Account
+      type: object
+      properties:
+        participant:
+          type: string
+        accountNumber:
+          type: string
+        accountType:
+          type: string
+        branch:
+          type: string
+      required:
+        - participant
+        - accountNumber
