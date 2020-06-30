@@ -9,13 +9,13 @@ servers:
 tags:
   - name: Directory
     x-displayName: Diretório
-    description: |- 
+    description: |-
       O diretório de identificadores de contas transacionais é um conjunto de vínculos.
       Um vínculo é uma associação entre uma chave de endereçamento, uma conta transacional e seu dono.
       O dono pode ser uma pessoa física ou uma pessoa jurídica. A chave de endereçamento é usada identificar um vínculo.
-      
+
       Os tipos de chave suportadas atualmente são as seguintes:
-      
+
       |  Tipo         | Exp. regular                                                                                               | Exemplo                              | Comentário                                                                |
       |---------------|------------------------------------------------------------------------------------------------------------|--------------------------------------|---------------------------------------------------------------------------|
       | CPF           |  ^\[0-9\]{11}$                                                                                             | 12345678901                          |                                                                           |
@@ -25,7 +25,6 @@ tags:
       | EVP           |  [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}                                              | 123e4567-e89b-12d3-a456-426655440000 | Endereço Virtual de Pagamento é um tipo de chave é gerado pelo DICT       |
       Novos tipos de chave poderão vir a ser adicionados no futuro. Logo, é importante que a implementação de clientes
       seja flexível, permitindo a adição de novos tipos de chave.
-
 paths:
   '/v1/dict/entries/{key}':
     get:
@@ -38,7 +37,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Entry'
-      operationId: get-v1-dict-entries
+        '204':
+          description: No Content
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: Get Entry
       description: Endpoint para buscar dados de uma conta transacional através de seu identificador
       parameters:
         - schema:
@@ -60,11 +67,79 @@ paths:
         in: path
         required: true
     delete:
-      summary: ''
-      operationId: delete-v1-dict-entries-key
+      summary: CWI
+      operationId: Delete Entry
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedEntry'
+              examples: {}
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+            text/html:
+              schema:
+                type: object
+                properties: {}
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples: {}
+      description: Endpoint para remover uma chave do DICT
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: document
+          required: true
+          description: |
+            CNPJ do parceiro
+        - schema:
+            type: string
+          in: header
+          name: reason
+          required: true
+          description: ''
+        - schema:
+            type: string
+          in: header
+          name: endToEnd
+          required: true
+          description: Identificador fim-a-fim do pagamento associado a essa requisição. Corresponde ao campo EndToEndId na mensagem pacs.008. Usado para rate-limiting.
+  /v1/dict/entries:
+    post:
+      summary: ''
+      operationId: Post Entry
+      responses:
+        '200':
+          description: OK
+      description: 'Endpoint para cadastrar uma chave. Uma `Entry` representa um vínculo entre uma conta transacional e um identificador/chave, podendo este ser um EMAIL, TELEFONE, CPF, CNPJ ou um EVP (hash de 64 caracteres gerado especificamente para o PIX). '
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: document
+          required: true
+          description: CNPJ do parceiro
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEntryRequest'
+        description: Entry para cadastro
 components:
   schemas:
     Entry:
@@ -119,3 +194,61 @@ components:
       required:
         - participant
         - accountNumber
+    ErrorResponse:
+      title: ErrorResponse
+      type: object
+      properties:
+        timestamp:
+          type: string
+        status:
+          type: integer
+        messages:
+          type: array
+          uniqueItems: false
+          description: Array com lista de erros
+          items: {}
+    DeletedEntry:
+      title: DeletedEntry
+      type: object
+      properties:
+        key:
+          type: string
+    CreateEntryRequest:
+      title: CreateEntryRequest
+      type: object
+      properties:
+        key:
+          type: string
+        keyType:
+          type: string
+        reason:
+          type: string
+        requestId:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Owner'
+        account:
+          $ref: '#/components/schemas/Account'
+      required:
+        - key
+        - keyType
+        - reason
+        - requestId
+        - owner
+        - account
+    CreateEntryResponse:
+      title: CreateEntryResponse
+      type: object
+      properties:
+        key:
+          type: string
+        keyType:
+          type: string
+        creationDate:
+          type: string
+        keyOwnershipDate:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Owner'
+        account:
+          $ref: '#/components/schemas/Account'
