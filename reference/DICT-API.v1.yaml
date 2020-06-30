@@ -28,7 +28,7 @@ tags:
 paths:
   '/v1/dict/entries/{key}':
     get:
-      summary: Your GET endpoint
+      summary: Get Entry
       tags: []
       responses:
         '200':
@@ -67,7 +67,7 @@ paths:
         in: path
         required: true
     delete:
-      summary: CWI
+      summary: Delete Entry
       operationId: Delete Entry
       responses:
         '200':
@@ -121,7 +121,7 @@ paths:
           description: Identificador fim-a-fim do pagamento associado a essa requisição. Corresponde ao campo EndToEndId na mensagem pacs.008. Usado para rate-limiting.
   /v1/dict/entries:
     post:
-      summary: ''
+      summary: Post Entry
       operationId: Post Entry
       responses:
         '200':
