@@ -6,6 +6,26 @@ info:
     A API do DICT é o serviço que do arranjo PIX que permite buscar os detalhes de uma conta transacional através de seu identificar no diretório de chaves transacionais. Este identificador, chave, pode ser do tipo mais conveniente ao usuário, tendo disponíveis os seguintes tipos EMAIL, TELEFONE, CPF, CNPJ e EVP.
 servers:
   - url: 'https://apigatewayuat.bvnet.bv'
+tags:
+  - name: Directory
+    x-displayName: Diretório
+    description: |- 
+      O diretório de identificadores de contas transacionais é um conjunto de vínculos.
+      Um vínculo é uma associação entre uma chave de endereçamento, uma conta transacional e seu dono.
+      O dono pode ser uma pessoa física ou uma pessoa jurídica. A chave de endereçamento é usada identificar um vínculo.
+      
+      Os tipos de chave suportadas atualmente são as seguintes:
+      
+      |  Tipo         | Exp. regular                                                                                               | Exemplo                              | Comentário                                                                |
+      |---------------|------------------------------------------------------------------------------------------------------------|--------------------------------------|---------------------------------------------------------------------------|
+      | CPF           |  ^\[0-9\]{11}$                                                                                             | 12345678901                          |                                                                           |
+      | CNPJ          |  ^\[0-9\]{14}$                                                                                             | 12345678901234                       |                                                                           |
+      | PHONE         |  ^\\+\[1-9\]\[0-9\]\d{1,14}$                                                                               | +5510998765432                       |                                                                           |
+      | EMAIL         |  [e-mails válidos W3C HTML5](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address)       | pix@bcb.gov.br                       | E-mail deve possuir no máximo 77 caracteres e deve ser em minúsculo       | 
+      | EVP           |  [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}                                              | 123e4567-e89b-12d3-a456-426655440000 | Endereço Virtual de Pagamento é um tipo de chave é gerado pelo DICT       |
+      Novos tipos de chave poderão vir a ser adicionados no futuro. Logo, é importante que a implementação de clientes
+      seja flexível, permitindo a adição de novos tipos de chave.
+
 paths:
   '/v1/dict/entries/{key}':
     get:
