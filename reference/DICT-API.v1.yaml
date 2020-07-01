@@ -37,8 +37,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Entry'
-        '204':
-          description: No Content
         '422':
           description: Unprocessable Entity (WebDAV)
           content:
@@ -124,8 +122,18 @@ paths:
       summary: Post Entry
       operationId: Post Entry
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateEntryResponse'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       description: 'Endpoint para cadastrar uma chave. Uma `Entry` representa um vínculo entre uma conta transacional e um identificador/chave, podendo este ser um EMAIL, TELEFONE, CPF, CNPJ ou um EVP (hash de 64 caracteres gerado especificamente para o PIX). '
       parameters:
         - schema:
@@ -214,19 +222,21 @@ components:
       type: object
       properties:
         key:
-          type: string
+          $ref: '#/components/schemas/Key'
     CreateEntryRequest:
       title: CreateEntryRequest
       type: object
       properties:
         key:
-          type: string
+          $ref: '#/components/schemas/Key'
         keyType:
-          type: string
+          $ref: '#/components/schemas/KeyType'
         reason:
-          type: string
+          $ref: '#/components/schemas/Reason'
         requestId:
           type: string
+          format: uuid
+          example: 0439ee98-7a22-4682-965d-077be30f239e
         owner:
           $ref: '#/components/schemas/Owner'
         account:
@@ -243,13 +253,15 @@ components:
       type: object
       properties:
         key:
-          type: string
+          $ref: '#/components/schemas/Key'
         keyType:
-          type: string
+          $ref: '#/components/schemas/Key'
         creationDate:
           type: string
+          format: date
         keyOwnershipDate:
           type: string
+          format: date
         owner:
           $ref: '#/components/schemas/Owner'
         account:
@@ -270,3 +282,16 @@ components:
         - CNPJ
         - EVP
       example: CPF
+    Reason:
+      type: string
+      title: Reason
+      enum:
+        - USER_REQUESTED
+        - ACCOUNT_CLOSURE
+        - BRANCH_TRANSFER
+        - BRANCH_TRANSFER
+        - BRANCH_TRANSFER
+        - ENTRY_INACTIVITY
+        - RECONCILIATION
+      example: USER_REQUESTED
+      x-examples: {}
