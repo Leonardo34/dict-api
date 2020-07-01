@@ -147,17 +147,19 @@ components:
       type: object
       properties:
         key:
-          type: string
+          $ref: '#/components/schemas/Key'
         keyType:
-          type: string
+          $ref: '#/components/schemas/KeyType'
         owner:
           $ref: '#/components/schemas/Owner'
         account:
           $ref: '#/components/schemas/Account'
         creationDate:
           type: string
+          format: date
         keyOwnershipDate:
           type: string
+          format: date
       required:
         - key
         - keyType
@@ -252,3 +254,19 @@ components:
           $ref: '#/components/schemas/Owner'
         account:
           $ref: '#/components/schemas/Account'
+    Key:
+      title: Key
+      type: string
+      description: 'Chave de endereçamento '
+      x-examples:
+        example-1: 12345678901
+    KeyType:
+      type: string
+      title: KeyType
+      enum:
+        - EMAIL
+        - PHONE
+        - CPF
+        - CNPJ
+        - EVP
+      example: CPF
