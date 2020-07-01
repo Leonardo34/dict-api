@@ -77,7 +77,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeletedEntry'
-              examples: {}
+              examples:
+                example-1:
+                  value:
+                    key: bv_pix@bv.com.br
             application/xml:
               schema:
                 type: object
@@ -89,6 +92,10 @@ paths:
                   key:
                     type: string
             text/html:
+              schema:
+                type: object
+                properties: {}
+            text/plain:
               schema:
                 type: object
                 properties: {}
