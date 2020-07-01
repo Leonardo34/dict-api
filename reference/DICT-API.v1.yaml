@@ -102,7 +102,7 @@ paths:
       description: Endpoint para remover uma chave do DICT
       parameters:
         - schema:
-            type: string
+            $ref: '#/components/schemas/Key'
           in: header
           name: document
           required: true
